@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<style>
+
+.hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu {
+        min-width: 200px !important;
+        background-color: #ffffff; 
+    }
+</style>
+<body>
+    <div class = "bg-light">
+
+        <nav class="navbar navbar-expand-lg hr" >
+            <a class="navbar-brand" href="#">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            
+        </nav>
+        <br>
+        <section class = "ml-3 hr">
+            
+            <h2>Dashboard</h2>
+        </section>
+        
+        <br>
+        
+        <section class = "ml-3 hr" style = "background-color: #fff;">
+
+            <div class = "mr-4 ml-4 d-flex pt-4" >
+                
+                <h3>Show Task</h3>
+                <div class = "ml-auto">
+
+                    <a type="button" href="{% url 'send-email' %}" >Send mail</a>
+                    <a type="button" href="{% url 'create-task' %}" class="btn btn-primary ">Create Task</a>
+                </div>
+                
+            </div>
+
+            <div class="mr-4 ml-4 text-center" ></div>
+                <div class="hr d-flex hr justify-content-center pt-4">
+                    <p>FILTER :</p>
+                </div>
+            </div>
+            <div class="mr-4 ml-4 text-center">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        All
+                    </button>
+                    <div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <button onclick="filterRecords('all')">all</button>
+                        <button onclick="filterRecords('this_week')">This Week</button>
+                        <button onclick="filterRecords('all_this_month')">All This Month</button>
+                        <button onclick="filterRecords('current_date')">Current Date</button>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="mr-4 ml-4 pt-4">
+
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col"><i class="fa-solid fa-circle-up"></i>TASK NAME</th>
+                        <th scope="col"><i class="fa-solid fa-circle-up"></i>DATE</th>
+                        <th scope="col"><i class="fa-solid fa-circle-up"></i>REPEAT</th>
+                        <th scope="col"><i class="fa-solid fa-circle-up"></i>DESCRIPTION</th>
+                        <th scope="col"><i class="fa-solid fa-circle-up"></i>ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody id="todo-table">
+
+                        
+                    {% for task in tasks %}
+                      <tr>
+                        <th scope="row">{{task.name}}</th>
+                        <td>{{task.due_date}}</td>
+                        <td>{{task.repeat}}</td>
+                        <td>{{task.description}}</td>
+                        <td><button type="button" class="btn btn-danger" id="{{task.id}}">Delete</button>
+                        <a type="button" class="btn btn-success" href='{% url 'update-task' task.id %}'>Edit</a>
+                        </td>
+
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+        </section>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('.dropdown-menu a.dropdown-item').click(function() {
+        var selectedText = $(this).text();
+        $('#dropdownMenuButton').text(selectedText);
+    });
+
+    $('.btn-danger').click( function(e) {
+        e.preventDefault();
+        var id = $(this).attr("id");
+
+        $.ajax({
+            url: "{% url 'delete-task' id=0 %}".replace('0', id),
+                type: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    "X-CSRFTOKEN": "{{ csrf_token }}"
+                },
+                data: {
+                    id: id
+                },
+                success: function (response){
+                    window.location.reload();
+                }
+            });
+    })
+
+
+
+    function filterRecords(filterOption) {
+        $.ajax({
+            url: '/filter-records/',
+            type: 'GET',
+            data: {
+                'filter_option': filterOption
+            },
+            dataType: 'json',
+            success: function (response) {
+            
+                console.log(response.filtered_records);
+
+                $('#todo-table').empty()
+
+
+                for (var i=0; i<response.filtered_records.length; i++) {
+                   
+                    var taskId = response.filtered_records[i].id;
+                    var row = $('<tr><td>' + response.filtered_records[i].name + '</td><td>' + response.filtered_records[i].due_date + '</td><td>' + response.filtered_records[i].repeat + '</td><td>' + response.filtered_records[i].description + '</td><td><button type="button" class="btn btn-danger" id="' + taskId + '">Delete</button>'+ " " +'<a type="button" class="btn btn-success" href="/update-task/' + taskId + '/">Edit</a></td></tr>');
+                    $('#todo-table').append(row);
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('Error:', errorThrown);
+            }
+        });
+    }
+ 
+
+</script>
+</html>

@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  web:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    volumes:
+      - ./todo:/todo
+  db:
+    image: postgres:12
+    hostname: db
+    volumes:
+      - postgres_tododata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=todo
+  admin:
+    image: adminer
+    restart: always
+    depends_on:
+        - db
+    container_name: db-adminer
+    ports:
+        - "8080:8080"
+volumes :
+  postgres_tododata:
+
