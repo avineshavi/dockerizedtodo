@@ -63,16 +63,15 @@
                 </div>
             </div>
             <div class="mr-4 ml-4 text-center">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        All
-                    </button>
-                    <div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button onclick="filterRecords('all')">all</button>
-                        <button onclick="filterRecords('this_week')">This Week</button>
-                        <button onclick="filterRecords('all_this_month')">All This Month</button>
-                        <button onclick="filterRecords('current_date')">Current Date</button>
-                        
+                <div class="dropdown show">
+                    <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      All
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <a class="dropdown-item" onclick="filterRecords('all')" href="#">All</a>
+                      <a class="dropdown-item" onclick="filterRecords('this_week')" href="#">This Week</a>
+                      <a class="dropdown-item" onclick="filterRecords('all_this_month')" href="#">This Month</a>
+                      <a class="dropdown-item" onclick="filterRecords('current_date')" href="#">Current Date</a>
                     </div>
                 </div>
             </div>
@@ -112,10 +111,11 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('.dropdown-menu a.dropdown-item').click(function() {
+
+    $('.dropdown-item').on('click', function() {
         var selectedText = $(this).text();
-        $('#dropdownMenuButton').text(selectedText);
-    });
+        $('.dropdown-toggle').text(selectedText);
+      });
 
     $('.btn-danger').click( function(e) {
         e.preventDefault();
@@ -157,7 +157,7 @@
                 for (var i=0; i<response.filtered_records.length; i++) {
                    
                     var taskId = response.filtered_records[i].id;
-                    var row = $('<tr><td>' + response.filtered_records[i].name + '</td><td>' + response.filtered_records[i].due_date + '</td><td>' + response.filtered_records[i].repeat + '</td><td>' + response.filtered_records[i].description + '</td><td><button type="button" class="btn btn-danger" id="' + taskId + '">Delete</button>'+ " " +'<a type="button" class="btn btn-success" href="/update-task/' + taskId + '/">Edit</a></td></tr>');
+                    var row = $('<tr><th>' + response.filtered_records[i].name + '</th><td>' + response.filtered_records[i].due_date + '</td><td>' + response.filtered_records[i].repeat + '</td><td>' + response.filtered_records[i].description + '</td><td><button type="button" class="btn btn-danger" id="' + taskId + '">Delete</button>'+ " " +'<a type="button" class="btn btn-success" href="/update-task/' + taskId + '/">Edit</a></td></tr>');
                     $('#todo-table').append(row);
                 }
             },
